@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+accounts:
+  message: "Welcome to EazyBank accounts related QA APIs "
+  contactDetails:
+    name: "Rod Rod - QA Lead"
+    email: "rod@eazybank.com"
+  onCallSupport:
+    - (666) 265-3765
+    - (666) 734-8371
