@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_customer")
+@Table(name = "customer")
 public class Customer extends BaseEntity {
 
     @Id

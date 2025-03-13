@@ -3,7 +3,7 @@ package com.ms.rr.accounts.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tb_account")
+@Table(name = "accounts")
 public class Account extends BaseEntity {
 
 
