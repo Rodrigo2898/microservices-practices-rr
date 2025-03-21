@@ -123,7 +123,7 @@
                 <version>3.4.2</version>
                 <configuration>
                     <to>
-                        <image>rodfeitosa28/${project.artifactId}:s8</image>
+                        <image>rodfeitosa28/${project.artifactId}:s9</image>
                     </to>
                 </configuration>
             </plugin>
