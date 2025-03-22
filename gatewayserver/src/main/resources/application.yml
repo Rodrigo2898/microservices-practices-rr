@@ -31,5 +31,6 @@ info:
 logging:
   level:
     com:
-      eazybytes:
-        gatewayserver: DEBUG
+      ms:
+        rr:
+          gatewayserver: debug
