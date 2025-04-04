@@ -1,10 +1,17 @@
 package com.ms.rr.gatewayserver.routes;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.timelimiter.TimeLimiterConfig;
+import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
+import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Configuration(proxyBeanMethods = false)
@@ -24,6 +31,9 @@ public class Routes {
                         .path("/eazybank/loans/**")
                         .filters( f -> f.rewritePath("/eazybank/loans/(?<segment>.*)","/${segment}")
                                 .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+                                .retry(retryConfig -> retryConfig.setRetries(3)
+                                        .setMethods(HttpMethod.GET)
+                                        .setBackoff(Duration.ofMillis(100),Duration.ofMillis(100),2,true))
                                 .circuitBreaker(config -> config.setName("loansCircuitBreaker")
                                         .setFallbackUri("forward:/contactSupport")))
                         .uri("lb://LOANS"))
@@ -34,5 +44,16 @@ public class Routes {
                                 .circuitBreaker(config -> config.setName("cardsCircuitBreaker")
                                         .setFallbackUri("forward:/contactSupport")))
                         .uri("lb://CARDS")).build();
+    }
+
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
+        return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
+                .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
+                .timeLimiterConfig(TimeLimiterConfig
+                        .custom()
+                        .timeoutDuration(Duration.ofSeconds(4))
+                        .build())
+                .build());
     }
 }
