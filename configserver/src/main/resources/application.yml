@@ -12,10 +12,12 @@ spring:
 #           search-locations: "file:///Users//rodri//Documents//config"
         git:
           uri: "https://github.com/eazybytes/eazybytes-config.git"
+#          uri: "https://github.com/Rodrigo2898/microservices-practices-rr/tree/main/configserver/src/main/resources/config"
           default-label: main
           timeout: 5
           clone-on-start: true
           force-pull: true
+
 
 management:
   endpoints:
