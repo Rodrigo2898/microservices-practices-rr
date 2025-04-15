@@ -49,5 +49,51 @@ public class CustomerDetailsDto {
     )
     private CardsDto cardsDto;
 
+    public @NotEmpty(message = "Name can not be a null or empty") @Size(min = 5, max = 30, message = "The length of the customer name should be between 5 and 30") String getName() {
+        return name;
+    }
 
+    public void setName(@NotEmpty(message = "Name can not be a null or empty") @Size(min = 5, max = 30, message = "The length of the customer name should be between 5 and 30") String name) {
+        this.name = name;
+    }
+
+    public @NotEmpty(message = "Email address can not be a null or empty") @Email(message = "Email address should be a valid value") String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@NotEmpty(message = "Email address can not be a null or empty") @Email(message = "Email address should be a valid value") String email) {
+        this.email = email;
+    }
+
+    public @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(@Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public AccountDto getAccountsDto() {
+        return accountsDto;
+    }
+
+    public void setAccountsDto(AccountDto accountsDto) {
+        this.accountsDto = accountsDto;
+    }
+
+    public LoansDto getLoansDto() {
+        return loansDto;
+    }
+
+    public void setLoansDto(LoansDto loansDto) {
+        this.loansDto = loansDto;
+    }
+
+    public CardsDto getCardsDto() {
+        return cardsDto;
+    }
+
+    public void setCardsDto(CardsDto cardsDto) {
+        this.cardsDto = cardsDto;
+    }
 }
