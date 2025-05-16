@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: message-rabbit
+  cloud:
+    function:
+      definition: email|sms
+
+server:
+  port: 9010
