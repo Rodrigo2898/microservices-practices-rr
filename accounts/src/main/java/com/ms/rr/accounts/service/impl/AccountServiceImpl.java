@@ -2,6 +2,7 @@ package com.ms.rr.accounts.service.impl;
 
 import com.ms.rr.accounts.constants.AccountsConstants;
 import com.ms.rr.accounts.dto.AccountDto;
+import com.ms.rr.accounts.dto.AccountsMsgDto;
 import com.ms.rr.accounts.dto.CustomerDto;
 import com.ms.rr.accounts.entity.Account;
 import com.ms.rr.accounts.entity.Customer;
@@ -12,6 +13,9 @@ import com.ms.rr.accounts.mapper.CustomerMapper;
 import com.ms.rr.accounts.repository.AccountRepository;
 import com.ms.rr.accounts.repository.CustomerRepository;
 import com.ms.rr.accounts.service.IAccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,12 +24,16 @@ import java.util.Random;
 @Service
 public class AccountServiceImpl implements IAccountService {
 
+    private static final Logger log = LoggerFactory.getLogger(AccountServiceImpl.class);
+
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
+    private final StreamBridge streamBridge;
 
-    public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository, StreamBridge streamBridge) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
+        this.streamBridge = streamBridge;
     }
 
     @Override
@@ -36,7 +44,16 @@ public class AccountServiceImpl implements IAccountService {
             throw new CustomerAlreadyExistsException("Customer already register with this mobile number: " + customerDto.getMobileNumber());
         }
         Customer savedCustomer = customerRepository.save(customer);
-        accountRepository.save(createNewAccount(savedCustomer));
+        Account savedAccount = accountRepository.save(createNewAccount(savedCustomer));
+        sendCommunication(savedAccount, savedCustomer);
+    }
+
+    private void sendCommunication(Account account, Customer customer) {
+        var accountsMsgDto = new AccountsMsgDto(account.getAccountNumber(), customer.getName(),
+                customer.getEmail(), customer.getMobileNumber());
+        log.info("Sending communication request for the details: {}", accountsMsgDto);
+        var result = streamBridge.send("sendCommunication-out-0", accountsMsgDto);
+        log.info("Sending communication request successfully processed?: {}", accountsMsgDto);
     }
 
     @Override
