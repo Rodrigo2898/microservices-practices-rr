@@ -17,7 +17,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -39,18 +38,19 @@ public class AccountController {
 
     private final IAccountService accountService;
 
-    public AccountController(IAccountService accountService) {
-        this.accountService = accountService;
-    }
-
     @Value("${build.version}")
     private String buildVersion;
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
-    @Autowired
-    private AccountsContactInfoDto accountsContactInfoDto;
+    private final AccountsContactInfoDto accountsContactInfoDto;
+
+    public AccountController(IAccountService accountService, Environment environment,
+                             AccountsContactInfoDto accountsContactInfoDto) {
+        this.accountService = accountService;
+        this.environment = environment;
+        this.accountsContactInfoDto = accountsContactInfoDto;
+    }
 
     @Operation(
             summary = "Create Account REST API",

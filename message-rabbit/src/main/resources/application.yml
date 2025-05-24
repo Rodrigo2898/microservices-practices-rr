@@ -4,14 +4,14 @@ server:
 spring:
   application:
     name: message-rabbit
-  cloud:
-    function:
-      definition: email|sms
-    stream:
-      bindings:
-        email-sms-in-0:
-          destination: send-communication
-          group: ${spring.application.name}
+#  cloud:
+#    function:
+#      definition: email|sms
+#    stream:
+#      bindings:
+#        email-sms-in-0:
+#          destination: send-communication
+#          group: ${spring.application.name}
   rabbitmq:
     host: localhost
     port: 5672

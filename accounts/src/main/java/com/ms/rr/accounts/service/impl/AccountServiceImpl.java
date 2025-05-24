@@ -15,7 +15,7 @@ import com.ms.rr.accounts.repository.CustomerRepository;
 import com.ms.rr.accounts.service.IAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,12 +28,13 @@ public class AccountServiceImpl implements IAccountService {
 
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
-    private final StreamBridge streamBridge;
+//    private final StreamBridge sstreamBridge;
+    private final RabbitTemplate rabbitTemplate;
 
-    public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository, StreamBridge streamBridge) {
+    public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository, RabbitTemplate rabbitTemplate) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
-        this.streamBridge = streamBridge;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -52,8 +53,7 @@ public class AccountServiceImpl implements IAccountService {
         var accountsMsgDto = new AccountsMsgDto(account.getAccountNumber(), customer.getName(),
                 customer.getEmail(), customer.getMobileNumber());
         log.info("Sending communication request for the details: {}", accountsMsgDto);
-        var result = streamBridge.send("sendCommunication-out-0", accountsMsgDto);
-        log.info("Sending communication request successfully processed?: {}", accountsMsgDto);
+        rabbitTemplate.convertAndSend("DIRECT-EXCHANGE", "TO-QUEUE", accountsMsgDto);
     }
 
     @Override
