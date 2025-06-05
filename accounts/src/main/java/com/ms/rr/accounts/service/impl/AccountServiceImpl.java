@@ -1,5 +1,6 @@
 package com.ms.rr.accounts.service.impl;
 
+import com.ms.rr.accounts.config.ProducerConfig;
 import com.ms.rr.accounts.constants.AccountsConstants;
 import com.ms.rr.accounts.dto.AccountDto;
 import com.ms.rr.accounts.dto.AccountsMsgDto;
@@ -53,7 +54,7 @@ public class AccountServiceImpl implements IAccountService {
         var accountsMsgDto = new AccountsMsgDto(account.getAccountNumber(), customer.getName(),
                 customer.getEmail(), customer.getMobileNumber());
         log.info("Sending communication request for the details: {}", accountsMsgDto);
-        rabbitTemplate.convertAndSend("DIRECT-EXCHANGE", "TO-QUEUE", accountsMsgDto);
+        rabbitTemplate.convertAndSend(ProducerConfig.EXCHANGE_NAME, ProducerConfig.ROUTING_KEY, accountsMsgDto);
     }
 
     @Override

@@ -10,15 +10,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ProducerConfig {
 
+    public static final String QUEUE_NAME = "account.created.queue";
+    public static final String EXCHANGE_NAME = "account.notification.exchange";
+    public static final String ROUTING_KEY = "account.created.notification";
+
     @Bean
     public Queue queueCommunication() {
-        return new Queue("queue-communication", true);
+        return new Queue(QUEUE_NAME, true);
     }
 
     @Bean
     public Exchange directExchange() {
         return ExchangeBuilder
-                .directExchange("DIRECT-EXCHANGE")
+                .directExchange(EXCHANGE_NAME)
                 .durable(true)
                 .build();
     }
@@ -28,7 +32,7 @@ public class ProducerConfig {
         return BindingBuilder
                 .bind(queueCommunication())
                 .to(directExchange())
-                .with("TO-QUEUE")
+                .with(ROUTING_KEY)
                 .noargs();
     }
 
